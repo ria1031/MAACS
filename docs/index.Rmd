@@ -6,7 +6,7 @@ output: html_document
 
 ## Name
 
-Please enter your name here.
+Ria Narayanan
 
 ### Setup
 
@@ -15,6 +15,9 @@ Read in the data with `read_csv()` and store the data as an R object named `data
 
 ```{r}
 ## Load the data and any necessary packages here.
+library(broom)
+library(tidyverse)
+dataset <- read_csv("maacs.csv.gz")
 
 ```
 
@@ -33,6 +36,20 @@ NOTE: For this part, do not use any plots.
 ```{r}
 ## Write your function here
 
+check_fever <- function(dataset){
+  d <- dataset %>%
+    select(age, fev1) %>%
+    drop_na()
+  
+  if (nrow(d) <10) return (FALSE)
+  q <- quantile(d$age, probs = c(0.25, 0.75), na.rm = TRUE)
+  younger <- d %>% filter(age <= q[1])
+  older <- d %>% filter(age >= q[2])
+  
+  mean(older$fev1, na.rm = TRUE) > mean(younger$fev1, na.rm = TRUE)
+}
+
+check_fever(dataset)
 ```
 
 
@@ -45,12 +62,16 @@ How much does FEV1 change for a 1-year increase in the child's age?
 ```{r}
 ## Add your code here
 
+linear_regression_age <- lm(fev1 ~ age, data = dataset)
+tidy(linear_regression_age, conf.int = TRUE)
+age_slope <- tidy(linear_regression_age) %>% filter(term == "age") %>% pull(estimate)
+age_slope
 ```
 
 
 Write your data analysis statement interpreting the regression model here:
 
-
+The model estimates tha FEV1 increases by about .1711 liters for each 1-year increase in age. This supports the idea that odler children, have higher FEV1 values than younger children.
 
 ## Part 3
 
@@ -61,16 +82,41 @@ NOTE: At least one supporting premise should use a plot.
 ```{r}
 ## Add your code here
 
+#premise 1)
+scatterplot_premise <- ggplot(dataset, aes(x = age, y = fev1)) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(se = FALSE) +
+  labs(title = "FEV1 vs Age", x = "Age(years)",  y = "FEV1(L)")
+
+scatterplot_premise
+
+
+#premise 2)
+cor_test_pearson <- cor.test(dataset$age, dataset$fev1, use = "pairwise.complete.obs")
+cor_test_spearman <- cor.test(dataset$fev1, dataset$fev1, use = "pairwise.complete.obs", method = "spearman")
+
+cor_test_pearson
+cor_test_spearman
+
+#premise 3)
+q <- quantile(dataset$age, c(0.25, 0.75), na.rm = TRUE)
+younger <- dataset %>% filter(age <= q[1])
+older <- dataset %>% filter(age >= q[2])
+
+mean_younger <- mean(younger$fev1, na.rm = TRUE)
+mean_older <- mean(older$fev1, na.rm = TRUE)
+diff <- mean_older - mean_younger
+diff
 ```
 
 
 Write the three supporting premise statements here:
 
-1. 
+1. The scatterplot of FEV1 against age displays a positive, upward trend, indicating that older children tend to have higher FEV1 values than younger children. This confirms the intial conclusion.
 
-2. 
+2.The Pearson and Spearman correlation both prove to be positive and highly statistically significant. The Pearson correlation is about 0.81 and the Spearman correlation is about 0.81. This again concludes that there is a positive association between age and FEV1.
 
-3. 
+3. From my quartile analysis, I found that children int he oldest quartile of age have an avergae FEV1 about 1.73 liters higher than children in the youngest quartile. This also supports the conclusion that FEV1 values are higher in older children than inyounger children.
 
 
 ## Part 4
@@ -87,11 +133,48 @@ For statements involving plots, instead of returning `TRUE` or `FALSE`, you func
 ```{r}
 ## Function for supporting premise statement 1
 
+premise1_plot <- function(dataset){
+  d <- dataset %>% select(age, fev1) %>% drop_na()
+  
+  #actual plot
+  p_actual <- ggplot(d, aes(x = age, y = fev1)) +
+    geom_point(alpha = 0.7) +
+    geom_smooth(se = FALSE) +
+    labs(title = "Actual: FEV1 vs Age", x = "age(years)", y = "FEV1(L)")
+  
+  # hypothetical
+  set.seed(42)
+  sim <- tibble(
+    age = seq(min(d$age), max(d$age), length.out = 100),
+    fev1 = 0.8 +0.2 * seq(min(d$age), max(d$age), length.out = 100) +rnorm(100,0,0.1)
+  )
+  
+  p_hyp <- ggplot(sim, aes(x = age, y = fev1)) +
+    geom_point(alpha = 0.7) +
+    geom_smooth(se = FALSE) +
+    labs(title = "Hypothetical: Strong Positive Slope", x = "Age(years)", y = "FEV1(L)")
+  
+  print(p_actual)
+  print(p_hyp)
+}
+
+premise1_plot(dataset)
 ```
 
 
 ```{r}
 ## Function for supporting premise statement 2
+
+premise2_correlation<- function(dataset){
+  d <- dataset %>% select(age, fev1) %>% drop_na()
+  
+  pearson <- cor.test(d$age, d$fev1, method = "pearson")
+  spearman <- cor.test(d$age, d$fev1, method = "spearman")
+  
+  pearson$estimate > 0 & pearson$p.value < 0.05 &&
+    spearman$estimate > 0 & spearman$p.value < 0.05
+}
+premise2_correlation(dataset)
 
 ```
 
@@ -99,11 +182,24 @@ For statements involving plots, instead of returning `TRUE` or `FALSE`, you func
 ```{r}
 ## Function for supporting premise statement 3
 
+premise3_quartile_diff <- function(dataset){
+  d <- dataset %>% select(age, fev1) %>% drop_na()
+  
+  q <- quantile(d$age, c(0.25, 0.75), na.rm = TRUE)
+  younger <- d %>% filter(age <= q[1])
+  older <- d %>% filter(age>= q[2])
+  
+  mean_older <- mean(older$fev1, na.rm = TRUE)
+  mean_younger <- mean(younger$fev1, na.rm = TRUE)
+  mean_older > mean_younger
+  
+  
+}
+
+premise3_quartile_diff(dataset)
 ```
 
 Execute each of your function and show that the produce the expected output.
-
-
 
 
 ## Part 5
