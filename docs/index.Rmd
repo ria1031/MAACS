@@ -212,3 +212,4 @@ Create a fault tree for the alternative outcome describing how the alternative o
 Your fault tree should be created as a separate image and does not need to be created in R. Upload the image of the fault tree to Canvas.
 
 
+Uploaded separately
