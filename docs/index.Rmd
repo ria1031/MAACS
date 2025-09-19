@@ -19,6 +19,7 @@ library(broom)
 library(tidyverse)
 dataset <- read_csv("maacs.csv.gz")
 
+
 ```
 
 ## Part 1
@@ -90,7 +91,6 @@ scatterplot_premise <- ggplot(dataset, aes(x = age, y = fev1)) +
 
 scatterplot_premise
 
-
 #premise 2)
 cor_test_pearson <- cor.test(dataset$age, dataset$fev1, use = "pairwise.complete.obs")
 cor_test_spearman <- cor.test(dataset$fev1, dataset$fev1, use = "pairwise.complete.obs", method = "spearman")
@@ -113,11 +113,11 @@ diff
 
 Write the three supporting premise statements here:
 
-1. The scatterplot of FEV1 against age displays a positive, upward trend, indicating that older children tend to have higher FEV1 values than younger children. This confirms the intial conclusion.
+1. The Scatterplot of FEV1 against age displays a positive, upward trend, indicating that older children tend to have higher FEV1 values than younger children. This confirms the initial conclusion.
 
 2.The Pearson and Spearman correlation both prove to be positive and highly statistically significant. The Pearson correlation is about 0.81 and the Spearman correlation is about 0.81. This again concludes that there is a positive association between age and FEV1.
 
-3. From my quartile analysis, I found that children int he oldest quartile of age have an avergae FEV1 about 1.73 liters higher than children in the youngest quartile. This also supports the conclusion that FEV1 values are higher in older children than inyounger children.
+3. From my quartile analysis, I found that children in the oldest quartile of age have an average FEV1 about 1.73 liters higher than children in the youngest quartile. This also supports the conclusion that FEV1 values are higher in older children than in younger children.
 
 
 ## Part 4
@@ -212,4 +212,4 @@ Create a fault tree for the alternative outcome describing how the alternative o
 Your fault tree should be created as a separate image and does not need to be created in R. Upload the image of the fault tree to Canvas.
 
 
-Uploaded separately
+Uploaded separately on Canvas
