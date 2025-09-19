@@ -71,7 +71,7 @@ age_slope
 
 Write your data analysis statement interpreting the regression model here:
 
-The model estimates tha FEV1 increases by about .1711 liters for each 1-year increase in age. This supports the idea that odler children, have higher FEV1 values than younger children.
+The model estimates that FEV1 increases by about .1711 liters for each 1-year increase in age. This supports the idea that older children, have higher FEV1 values than younger children.
 
 ## Part 3
 
@@ -107,6 +107,7 @@ mean_younger <- mean(younger$fev1, na.rm = TRUE)
 mean_older <- mean(older$fev1, na.rm = TRUE)
 diff <- mean_older - mean_younger
 diff
+
 ```
 
 
