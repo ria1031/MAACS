@@ -207,6 +207,10 @@ Execute each of your function and show that the produce the expected output.
 
 Describe one alternative to the primary statement "FEV1 values in children are higher in older children relative to younger children". 
 
+
+Alternate Outcome: FEV1 values in children are the same in older children relative to younger children.
+
+
 Create a fault tree for the alternative outcome describing how the alternative outcome could be realized in the data even if the primary statement were true.
 
 Your fault tree should be created as a separate image and does not need to be created in R. Upload the image of the fault tree to Canvas.
